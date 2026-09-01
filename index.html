@@ -608,5 +608,12 @@ render();
 setInterval(()=>{
   if(!document.activeElement?.matches('textarea,input,select')) render();
 },30000);
+  if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body></html>
