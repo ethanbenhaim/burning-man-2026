@@ -1,0 +1,62 @@
+BURNING MAN 2026 — OFFLINE / HOME SCREEN PATCH
+
+Upload these 4 files to the ROOT of the GitHub repository:
+- sw.js
+- manifest.webmanifest
+- icon-192.png
+- icon-512.png
+
+Then edit index.html.
+
+1) Inside <head>, directly after the existing:
+   <meta name="theme-color" content="#0b0d10">
+
+paste:
+
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BM 2026">
+
+2) Near the very bottom of index.html, just BEFORE:
+   </script>
+
+paste:
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+
+3) Commit the changes to main.
+
+4) Wait for Vercel to redeploy.
+
+5) On your iPhone:
+   - Open https://burningman2026chromeinteractive.vercel.app/ in Safari while online.
+   - Refresh it once.
+   - Leave it open for about 5 seconds so the service worker can cache the app.
+   - Share -> Add to Home Screen.
+   - Open it once from the Home Screen while still online.
+   - Then turn on Airplane Mode and open it again.
+
+EXPECTED OFFLINE BEHAVIOR
+- Schedule loads with no internet.
+- Today / Upcoming / Rumors / Attended still work.
+- Countdown still works from the phone's clock.
+- Notes remain available because they are in localStorage.
+- Photos remain available because they are in IndexedDB.
+- New schedule updates arrive the next time you reconnect and reload.
+
+WHEN YOU CHANGE THE APP LATER
+Change this line in sw.js:
+  const CACHE_NAME = 'burning-man-2026-v1';
+
+to:
+  const CACHE_NAME = 'burning-man-2026-v2';
+
+then v3, v4, etc. This ensures old cached app versions get replaced cleanly.
